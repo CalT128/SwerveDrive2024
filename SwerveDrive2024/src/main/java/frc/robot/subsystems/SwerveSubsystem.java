@@ -4,10 +4,19 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new SwerveSubsystem. */
+  //FRONT LEFT MOTORS
+  TalonFX frontLeftDriveMotor;
+  TalonFX frontLeftTurnMotor;
+  //FRONT RIGHT MOTORS
+  TalonFX frontRightDriveMotor;
+  TalonFX frontRightTurnMotor;
+  //
   SwerveModule frontLeftSwerveModule;
   SwerveModule frontRightSwerveModule;
   SwerveModule backLeftSwerveModule;

@@ -9,9 +9,9 @@ public class SwerveModule {
     CANcoder axisSensor;
     double rotationalValue;
     public SwerveModule(TalonFX dMotor, TalonFX tMotor, CANcoder aSensor, double rotationalValue){
-        driveMotor = dMotor;
-        turnMotor = tMotor;
-        axisSensor = aSensor;
+        this.driveMotor = dMotor;
+        this.turnMotor = tMotor;
+        this.axisSensor = aSensor;
         this.rotationalValue = rotationalValue;
     }
 }
