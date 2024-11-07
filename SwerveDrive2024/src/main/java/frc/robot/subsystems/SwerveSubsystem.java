@@ -16,7 +16,13 @@ public class SwerveSubsystem extends SubsystemBase {
   //FRONT RIGHT MOTORS
   TalonFX frontRightDriveMotor;
   TalonFX frontRightTurnMotor;
-  //
+  //BACK LEFT MOTORS
+  TalonFX backLeftDriveMotor;
+  TalonFX backLeftTurnMotor;
+  //BACK RIGHT MOTORS
+  TalonFX backRightDriveMotor;
+  TalonFX backRightTurnMotor;
+  //SWERVE MODULES
   SwerveModule frontLeftSwerveModule;
   SwerveModule frontRightSwerveModule;
   SwerveModule backLeftSwerveModule;
