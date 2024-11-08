@@ -17,12 +17,10 @@ public class SwerveModule {
     Vector strafeVector;
     Vector rotationalVector;
     Vector driveVector;
-    // actutaly degree and magnitude
-    double magnitude;
-    double degree;
+    // current degree;
+    
     //PID Controller
     PIDController degreeController;
-
     public SwerveModule(TalonFX dMotor, TalonFX tMotor, CANcoder aSensor, double rotationalDegreeValue){
         this.driveMotor = dMotor;
         this.turnMotor = tMotor;

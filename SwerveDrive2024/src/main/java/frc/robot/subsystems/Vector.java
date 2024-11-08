@@ -16,12 +16,15 @@ public class Vector {
         }
         //Convert into unit circle (0 is horizontal for unit circles while 0 is vertical on swerve drive)
         degrees = (degrees + 90) % 360;
+        //trig 
         x = magnitude * Math.cos(Math.toRadians(degrees));
         y = magnitude * Math.sin(Math.toRadians(degrees));
     }
     //x and y vector creation
     public Vector(double x, double y){
+        //Pythagorean theorem
         magnitude = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+        //arc tan to convert x and y's to polar degrees
         degrees = (Math.toDegrees(Math.atan2(y,x)) + 270)% 360;
     }
     public double getX(){
@@ -42,9 +45,7 @@ public class Vector {
         degrees = (Math.toDegrees(Math.atan2(y,x)) + 270) % 360;
     }
     //Combines vectors together
-    public void addVectors(Vector v){
-        x = (x + v.getX())/2;
-        y = (y + v.getY())/2;
-        xyUpdate(x,y);
+    public Vector addVector(Vector v){
+        return new Vector((x + v.getX())/2,(y + v.getY())/2);
     }
 }
