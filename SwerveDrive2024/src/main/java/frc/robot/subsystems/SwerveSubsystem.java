@@ -5,13 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveSubsystem extends SubsystemBase {
-  /** Creates a new SwerveSubsystem. */
-  //MOTOR DECLARATION
   //FRONT LEFT MOTORS
   TalonFX frontLeftDriveMotor;
   TalonFX frontLeftTurnMotor;
@@ -24,16 +24,24 @@ public class SwerveSubsystem extends SubsystemBase {
   //BACK RIGHT MOTORS
   TalonFX backRightDriveMotor;
   TalonFX backRightTurnMotor;
-  //SWERVE MODULE ENCODERS DECLARATION
+  //SWERVE MODULE CAN ENCODERS 
   CANcoder frontLeftEncoder;
   CANcoder frontRightEncoder;
   CANcoder backLeftEncoder;
   CANcoder backRightEncoder;
-  //SWERVE MODULES DECLARATION
+  //GYROSCOPE PIGEON 
+  Pigeon2 robotGyro;
+  //SWERVE MODULES 
   SwerveModule frontLeftSwerveModule;
   SwerveModule frontRightSwerveModule;
   SwerveModule backLeftSwerveModule;
   SwerveModule backRightSwerveModule;
+  //PID CONTROLLERS
+  PIDController angleCorrectionController;
+  //CURRENT STATUS VARIABLES
+  double currentRobotDegree;
+  boolean angleCorrectionMode;
+
   public SwerveSubsystem() {
     //SWERVE MOTORS INSTANTIATION
     frontLeftDriveMotor = new TalonFX(1,"Drivetrain");
@@ -49,12 +57,29 @@ public class SwerveSubsystem extends SubsystemBase {
     frontRightEncoder = new CANcoder(21,"Drivetrain");
     backLeftEncoder = new CANcoder(22,"Drivetrain");
     backRightEncoder = new CANcoder(23,"Drivetrain");
-    frontLeftSwerveModule = new SwerveModule(frontLeftDriveMotor,frontLeftTurnMotor,frontLeftEncoder,45);
-
+    //PIGEON2 INSTANTIATION
+    robotGyro = new Pigeon2(9,"Drivetrain");
+    //SWERVE MODULE INSTANTIATION
+    frontLeftSwerveModule = new SwerveModule(frontLeftDriveMotor,frontLeftTurnMotor,frontLeftEncoder,135);
+    frontRightSwerveModule = new SwerveModule(frontRightDriveMotor,frontRightTurnMotor,frontRightEncoder,45);
+    backLeftSwerveModule = new SwerveModule(backLeftDriveMotor,backLeftTurnMotor,backLeftEncoder,225);
+    backRightSwerveModule = new SwerveModule(backRightDriveMotor,backRightTurnMotor,backRightEncoder,315);
+    //PID CONTROLLER INSTANTIATION
+    angleCorrectionController = new PIDController(0,0,0);
+    //Connects 0 degrees to 360 degrees to allow for the least distance error from current to target
+    angleCorrectionController.enableContinuousInput(0,360);
+    //Allows for leeway if the current is not exactly on target
+    angleCorrectionController.setTolerance(0.001);
   }
-
+  public double getCurrentRobotDegree(){
+    return currentRobotDegree;
+  }
+  public void setCorrectionMode(boolean mode){
+    angleCorrectionMode = mode;
+  }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    //Set the current degree of the robot 
+    currentRobotDegree = ((robotGyro.getAngle() % 360) + 360) % 360;
   }
 }

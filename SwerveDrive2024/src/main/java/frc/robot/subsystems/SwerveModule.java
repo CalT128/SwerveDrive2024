@@ -14,4 +14,7 @@ public class SwerveModule {
         this.axisSensor = aSensor;
         this.rotationalValue = rotationalValue;
     }
+    public void drive(){
+
+    }
 }
