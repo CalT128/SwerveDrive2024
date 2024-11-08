@@ -17,27 +17,47 @@ public class SwerveModule {
     Vector strafeVector;
     Vector rotationalVector;
     Vector driveVector;
-    // current degree;
-    
+    //Current module values
+    double currentModuleDegree;
+    //Target module values
+    double targetModuleDegree;
+    double targetModuleMagnitude;
     //PID Controller
     PIDController degreeController;
     public SwerveModule(TalonFX dMotor, TalonFX tMotor, CANcoder aSensor, double rotationalDegreeValue){
+        //Motors
         this.driveMotor = dMotor;
         this.turnMotor = tMotor;
+        //CAN coder from swerve subsystem
         this.axisSensor = aSensor;
+        //value when rotating
         this.rotationalDegreeValue = rotationalDegreeValue;
+
         strafeVector = new Vector(0,1);
         rotationalVector = new Vector(0,1);
+        //PID 
         degreeController = new PIDController(0, 0,0);
         degreeController.setTolerance(0.001);
         degreeController.enableContinuousInput(0,360);
     }
     public void drive(Vector strafeVector, double rotationalMagnitude, double currentRobotDegree){
+        //setting and creating the strafe vector and rotational vector
         this.strafeVector = strafeVector;
         this.rotationalVector = new Vector(rotationalMagnitude, rotationalDegreeValue,true);
+        //optimizes speed
+        if (rotationalVector.getMagnitude()>0.5){
+            rotationalVector.setMagnitude(0.5);
+            strafeVector.setMagnitude(0.5);
+        }
+        else{
+            strafeVector.setMagnitude(1-rotationalVector.getMagnitude());
+        }
+        //combining vectors
         driveVector = strafeVector.addVector(rotationalVector);
-        magnitude = driveVector.getMagnitude();
-        degree = driveVector.getDegrees();
-        driveMotor.set(magnitude);
+        targetModuleMagnitude = driveVector.getMagnitude();
+        targetModuleDegree = driveVector.getDegrees();
+        //current wheel degree
+        currentModuleDegree = ((((axisSensor.getPosition().getValueAsDouble() % 1) + 1) % 1) * 360);
+        driveMotor.set(targetModuleMagnitude);
     }
 }
