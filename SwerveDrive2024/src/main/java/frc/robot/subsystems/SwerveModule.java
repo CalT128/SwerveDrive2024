@@ -58,6 +58,8 @@ public class SwerveModule {
         targetModuleDegree = driveVector.getDegrees();
         //current wheel degree
         currentModuleDegree = ((((axisSensor.getPosition().getValueAsDouble() % 1) + 1) % 1) * 360);
+        //PID controller
+        turnMotor.set(degreeController.calculate(currentModuleDegree,targetModuleDegree));
         driveMotor.set(targetModuleMagnitude);
     }
 }

@@ -68,7 +68,7 @@ public class SwerveSubsystem extends SubsystemBase {
     angleCorrectionController = new PIDController(0,0,0);
     //Connects 0 degrees to 360 degrees to allow for the least distance error from current to target
     angleCorrectionController.enableContinuousInput(0,360);
-    //Allows for leeway if the current is not exactly on target
+    //Allows for leeway if the current degree is not exactly on target
     angleCorrectionController.setTolerance(0.001);
   }
   public double getCurrentRobotDegree(){
@@ -76,6 +76,12 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   public void setCorrectionMode(boolean mode){
     angleCorrectionMode = mode;
+  }
+  public void drive(Vector strafeVector, double rotationalMagnitude){
+    frontLeftSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
+    frontRightSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
+    backLeftSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
+    backRightSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
   }
   @Override
   public void periodic() {

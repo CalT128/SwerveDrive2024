@@ -6,6 +6,7 @@ public class Vector {
     double x;
     double y;
     //magnitude vector creation
+    //takes in any magnitude (negative or position) and any degree (could be beyond 360 degrees)
     public Vector(double magnitude, double degrees, boolean magnitudeVectorCreation){
         if (magnitude < 0){
             degrees = (degrees + 180) % 360;
