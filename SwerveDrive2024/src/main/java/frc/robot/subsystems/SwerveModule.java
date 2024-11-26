@@ -13,12 +13,14 @@ public class SwerveModule {
     CANcoder axisSensor;
     //degree when rotating
     double rotationalDegreeValue;
-    //vector used for calculating the exact angle and magnitude
+    //vector used for calculating the exact target angle and magnitude
     Vector strafeVector;
     Vector rotationalVector;
-    Vector driveVector;
+    //target vector
+    Vector targetDriveVector;
     //Current module values
     double currentModuleDegree;
+    boolean inverted;
     //Target module values
     double targetModuleDegree;
     double targetModuleMagnitude;
@@ -32,15 +34,19 @@ public class SwerveModule {
         this.axisSensor = aSensor;
         //value when rotating
         this.rotationalDegreeValue = rotationalDegreeValue;
-
+        //different target vectors
         strafeVector = new Vector(0,1);
         rotationalVector = new Vector(0,1);
         //PID 
         degreeController = new PIDController(0, 0,0);
         degreeController.setTolerance(0.001);
         degreeController.enableContinuousInput(0,360);
+        //target values
+        inverted = false;
     }
     public void drive(Vector strafeVector, double rotationalMagnitude, double currentRobotDegree){
+        //current wheel degree
+        currentModuleDegree = ((((axisSensor.getPosition().getValueAsDouble() % 1) + 1) % 1) * 360);
         //setting and creating the strafe vector and rotational vector
         this.strafeVector = strafeVector;
         this.rotationalVector = new Vector(rotationalMagnitude, rotationalDegreeValue,true);
@@ -53,13 +59,23 @@ public class SwerveModule {
             strafeVector.setMagnitude(1-rotationalVector.getMagnitude());
         }
         //combining vectors
-        driveVector = strafeVector.addVector(rotationalVector);
-        targetModuleMagnitude = driveVector.getMagnitude();
-        targetModuleDegree = driveVector.getDegrees();
-        //current wheel degree
-        currentModuleDegree = ((((axisSensor.getPosition().getValueAsDouble() % 1) + 1) % 1) * 360);
-        //PID controller
-        turnMotor.set(degreeController.calculate(currentModuleDegree,targetModuleDegree));
+        targetDriveVector = strafeVector.addVector(rotationalVector);
+        //makes the robot field oriented
+        targetDriveVector.magUpdate(targetDriveVector.getMagnitude(), targetDriveVector.getDegrees()-currentRobotDegree);
+        targetModuleMagnitude = targetDriveVector.getMagnitude();
+        targetModuleDegree = targetDriveVector.getDegrees();
+        if (inverted){
+            targetModuleMagnitude *= -1;
+            targetModuleDegree = (targetModuleDegree + 180 + 360) % 360;
+        }
+        if (Math.abs(targetDriveVector.getDegrees()-currentModuleDegree) > 90){
+            inverted = !inverted;
+        }
+        
+        
+        //use PID degree controller to calculate a values for the turn motor to run at to achieve the target degree
+        turnMotor.set(degreeController.calculate(currentModuleDegree, targetModuleDegree));
+        //sets the drive motor to the target magnitude
         driveMotor.set(targetModuleMagnitude);
     }
 }

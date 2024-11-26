@@ -12,22 +12,24 @@ import frc.robot.subsystems.Vector;
 public class DriveCommand extends Command {
   SwerveSubsystem m_swerveSubsystem;
   Joystick m_driverJoystick;
-
+  //drive vectors
   Vector strafeVector;
+  Vector rotationVector;
   public DriveCommand(SwerveSubsystem swerveSubsystem, Joystick stick) {
     this.m_swerveSubsystem = swerveSubsystem;
     this.m_driverJoystick = stick;
     strafeVector = new Vector(0,0);
+    rotationVector = new Vector(0,0);
   }
   @Override
   public void initialize() {
-
   }
-
 
   @Override
   public void execute() {
-    strafeVector = new Vector(m_driverJoystick.getRawAxis(1),m_driverJoystick.getRawAxis(2));//CHANGE AXIS LATER
+    strafeVector = new Vector(m_driverJoystick.getRawAxis(1),m_driverJoystick.getRawAxis(2));
+    rotationVector = new Vector(m_driverJoystick.getRawAxis(5),m_driverJoystick.getRawAxis(6));
+    m_swerveSubsystem.drive(strafeVector,rotationVector);
   }
 
 

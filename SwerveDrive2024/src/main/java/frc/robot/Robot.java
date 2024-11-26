@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private Command m_driveCommand;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_driveCommand = m_robotContainer.getTeleopCommand();
   }
 
   /**
@@ -77,11 +79,14 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_driveCommand.schedule();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_driveCommand.schedule();
+  }
 
   @Override
   public void testInit() {

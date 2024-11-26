@@ -5,7 +5,6 @@ public class Vector {
     double degrees;
     double x;
     double y;
-    //magnitude vector creation
     //takes in any magnitude (negative or position) and any degree (could be beyond 360 degrees)
     public Vector(double magnitude, double degrees, boolean magnitudeVectorCreation){
         if (magnitude < 0){
@@ -49,6 +48,7 @@ public class Vector {
         magnitude = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
         degrees = (Math.toDegrees(Math.atan2(y,x)) + 270) % 360;
     }
+    //used to update x and y after changing magnitude or degree values
     public void magUpdate(double magnitude, double degrees){
         if (magnitude < 0){
             degrees = (degrees + 180) % 360;

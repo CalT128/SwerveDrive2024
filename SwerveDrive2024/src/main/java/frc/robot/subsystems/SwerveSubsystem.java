@@ -38,10 +38,10 @@ public class SwerveSubsystem extends SubsystemBase {
   SwerveModule backRightSwerveModule;
   //PID CONTROLLERS
   PIDController angleCorrectionController;
+  PIDController rotationController;
   //CURRENT STATUS VARIABLES
   double currentRobotDegree;
   boolean angleCorrectionMode;
-
   public SwerveSubsystem() {
     //SWERVE MOTORS INSTANTIATION
     frontLeftDriveMotor = new TalonFX(1,"Drivetrain");
@@ -53,12 +53,12 @@ public class SwerveSubsystem extends SubsystemBase {
     backRightDriveMotor = new TalonFX(5,"Drivetrain");
     backRightTurnMotor = new TalonFX(6,"Drivetrain");
     //ENCODER INSTANTIATION
-    frontLeftEncoder = new CANcoder(20,"Drivetrain");
-    frontRightEncoder = new CANcoder(21,"Drivetrain");
-    backLeftEncoder = new CANcoder(22,"Drivetrain");
+    frontLeftEncoder = new CANcoder(21,"Drivetrain");
+    frontRightEncoder = new CANcoder(22,"Drivetrain");
+    backLeftEncoder = new CANcoder(24,"Drivetrain");
     backRightEncoder = new CANcoder(23,"Drivetrain");
     //PIGEON2 INSTANTIATION
-    robotGyro = new Pigeon2(9,"Drivetrain");
+    robotGyro = new Pigeon2(25,"Drivetrain");
     //SWERVE MODULE INSTANTIATION
     frontLeftSwerveModule = new SwerveModule(frontLeftDriveMotor,frontLeftTurnMotor,frontLeftEncoder,135);
     frontRightSwerveModule = new SwerveModule(frontRightDriveMotor,frontRightTurnMotor,frontRightEncoder,45);
@@ -68,8 +68,12 @@ public class SwerveSubsystem extends SubsystemBase {
     angleCorrectionController = new PIDController(0,0,0);
     //Connects 0 degrees to 360 degrees to allow for the least distance error from current to target
     angleCorrectionController.enableContinuousInput(0,360);
-    //Allows for leeway if the current degree is not exactly on target
+    //Allows for leeway if the current is not exactly on target
     angleCorrectionController.setTolerance(0.001);
+
+    rotationController = new PIDController(0,0,0);
+    rotationController.enableContinuousInput(0,360);
+    rotationController.setTolerance(0.001);
   }
   public double getCurrentRobotDegree(){
     return currentRobotDegree;
@@ -77,11 +81,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public void setCorrectionMode(boolean mode){
     angleCorrectionMode = mode;
   }
-  public void drive(Vector strafeVector, double rotationalMagnitude){
-    frontLeftSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
-    frontRightSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
-    backLeftSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
-    backRightSwerveModule.drive(strafeVector, rotationalMagnitude, currentRobotDegree);
+  public void drive(Vector strafeVector, Vector rotationVector){
+    //calculates the magnitude of rotation depending on the angle of the robot and the target angle
+    double rotationalMagnitude = rotationController.calculate(currentRobotDegree,rotationVector.getDegrees());
+    //Call drive command from each of the swerve modules
+    frontLeftSwerveModule.drive(strafeVector,rotationalMagnitude, currentRobotDegree);
+    frontRightSwerveModule.drive(strafeVector,rotationalMagnitude, currentRobotDegree);
+    backLeftSwerveModule.drive(strafeVector,rotationalMagnitude, currentRobotDegree);
+    backRightSwerveModule.drive(strafeVector,rotationalMagnitude, currentRobotDegree);
   }
   @Override
   public void periodic() {
