@@ -64,11 +64,12 @@ public class SwerveModule {
         targetDriveVector.magUpdate(targetDriveVector.getMagnitude(), targetDriveVector.getDegrees()-currentRobotDegree);
         targetModuleMagnitude = targetDriveVector.getMagnitude();
         targetModuleDegree = targetDriveVector.getDegrees();
+        //modules move the smallest amount to get to the target magnitude and direction
         if (inverted){
             targetModuleMagnitude *= -1;
             targetModuleDegree = (targetModuleDegree + 180 + 360) % 360;
         }
-        if (Math.abs(targetDriveVector.getDegrees()-currentModuleDegree) > 90){
+        if (Math.abs(targetModuleDegree - currentModuleDegree) > 90){
             inverted = !inverted;
         }
         
